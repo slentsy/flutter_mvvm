@@ -68,9 +68,9 @@ class _CostPageState extends State<CostPage> {
                                     icon: Icon(Icons.arrow_drop_down),
                                     iconSize: 30,
                                     elevation: 2,
-                                    hint: Text('Pilih Provinsi'),
+                                    hint: Text('Pilih Provinsi dulu'),
                                     // : Text(selectedDataProvince.province),
-                                    style: TextStyle(color: Colors.black),
+                                    style: TextStyle(color: const Color.fromARGB(255, 49, 40, 171)),
                                     items: value.provinceList.data!
                                         .map<DropdownMenuItem<Province>>(
                                             (Province value) {
@@ -82,6 +82,7 @@ class _CostPageState extends State<CostPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedProvince = newValue;
+                                        selectedCity = null; 
                                         homeViewModel.getCityList(
                                             selectedProvince.provinceId);
                                         // selectedProvinceId = selectedDataProvince.provinceId;
@@ -116,7 +117,7 @@ class _CostPageState extends State<CostPage> {
                                     icon: Icon(Icons.arrow_drop_down),
                                     iconSize: 30,
                                     elevation: 2,
-                                    hint: Text('Pilih Provinsi'),
+                                    hint: Text('Sekarang pilih kotanya'),
                                     // : Text(selectedDataProvince.province),
                                     style: TextStyle(color: Colors.black),
                                     items: value.cityList.data!
@@ -130,8 +131,8 @@ class _CostPageState extends State<CostPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedCity = newValue;
-                                        homeViewModel.getCityList(
-                                            selectedCity.provinceId);
+                                        // homeViewModel.getCityList(
+                                        //     selectedCity.provinceId);
                                         // selectedProvinceId = selectedDataProvince.provinceId;
                                       });
                                     });
@@ -144,11 +145,11 @@ class _CostPageState extends State<CostPage> {
                       ),
                     ),
                   )),
-              Flexible(
-                  flex: 2,
-                  child: Container(
-                    color: Colors.brown.shade200,
-                  ))
+              // Flexible(
+              //     flex: 2,
+              //     child: Container(
+              //       color: Colors.brown.shade200,
+              //     ))
             ],
           ),
         ),

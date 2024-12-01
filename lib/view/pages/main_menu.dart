@@ -43,7 +43,7 @@ class _MainMenuState extends State<MainMenu> {
       ),
       bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.amber,
+          backgroundColor: const Color.fromRGBO(255, 193, 7, 1),
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           items: [

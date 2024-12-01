@@ -24,13 +24,42 @@ class _CostPageState extends State<CostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.brown,
-        title: Text(
-          "Calculate Cost",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        toolbarHeight: 200,
+        backgroundColor: const Color(0xF3DCEC),
+        flexibleSpace: Container(
+          child: Row(
+            children: [
+              SizedBox(
+                  height: 112,
+                  width: 97,
+                  child: Image.asset('assets/images/ojek.png')),
+              Column(
+                children: [
+                  Column(
+                    children: [
+                      Text("Hitung Estimasi Ongkir",
+                          style: TextStyle(
+                                color: const Color(0xFFAC0574),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15))
+                      ],
+                    
+                  )
+                ],
+              )
+            ],
+          ),
         ),
-        centerTitle: true,
       ),
+      // title: Text(
+      //   "Hitung Estimasi Ongkir",
+      //   style: TextStyle(
+      //     color: const Color (0xFFAC0574),
+      //     fontWeight: FontWeight.bold,
+      //     fontSize: 15)),
+      // centerTitle: true
+      // )
+
       body: ChangeNotifierProvider<HomeViewmodel>(
         create: (context) => homeViewModel,
         child: Container(
@@ -70,7 +99,8 @@ class _CostPageState extends State<CostPage> {
                                     elevation: 2,
                                     hint: Text('Pilih Provinsi dulu'),
                                     // : Text(selectedDataProvince.province),
-                                    style: TextStyle(color: const Color.fromARGB(255, 49, 40, 171)),
+                                    style: TextStyle(
+                                        color: const Color.fromARGB(255, 49, 40, 171)),
                                     items: value.provinceList.data!
                                         .map<DropdownMenuItem<Province>>(
                                             (Province value) {
@@ -82,7 +112,7 @@ class _CostPageState extends State<CostPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedProvince = newValue;
-                                        selectedCity = null; 
+                                        selectedCity = null;
                                         homeViewModel.getCityList(
                                             selectedProvince.provinceId);
                                         // selectedProvinceId = selectedDataProvince.provinceId;

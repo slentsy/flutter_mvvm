@@ -106,7 +106,7 @@ class _CostPageState extends State<CostPage> {
                               default:
                                 return Container();
                             }
-                          }), 
+                          }),
 
                           Divider(
                             height: 10,
@@ -360,24 +360,29 @@ class _CostPageState extends State<CostPage> {
                             },
                             child: Text("Calculate Cost"),
                           ),
+
                           SizedBox(
-                              height: 200,
-                              child: Consumer<HomeViewmodel>(
-                                  builder: (context, value, _) {
+                            height: 200,
+                            child: Consumer<HomeViewmodel>(
+                              builder: (context, value, _) {
                                 switch (value.costServiceList.status) {
                                   case Status.loading:
-                                    return CircularProgressIndicator();
+                                    return Center(
+                                        child: CircularProgressIndicator());
                                   case Status.error:
-                                    return Text(
-                                      "Error: ${value.costServiceList.message}",
-                                      style: TextStyle(color: Colors.red),
+                                    return Center(
+                                      child: Text(
+                                        "Error: ${value.costServiceList.message}",
+                                        style: TextStyle(color: Colors.red),
+                                      ),
                                     );
                                   case Status.complited:
-                                    // tampilin cost nya
+                                    // If completed, display the cost list
                                     if (value
                                             .costServiceList.data?.isNotEmpty ==
                                         true) {
                                       return ListView.builder(
+                                        padding: EdgeInsets.all(8.0),
                                         itemCount:
                                             value.costServiceList.data!.length,
                                         itemBuilder: (context, index) {
@@ -387,12 +392,11 @@ class _CostPageState extends State<CostPage> {
                                             margin: EdgeInsets.symmetric(
                                                 vertical: 8.0,
                                                 horizontal: 16.0),
-                                            elevation:
-                                                4.0, 
+                                            elevation: 4.0,
                                             shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(
-                                                        12.0)),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            ),
                                             child: Padding(
                                               padding: EdgeInsets.all(16),
                                               child: Column(
@@ -441,7 +445,7 @@ class _CostPageState extends State<CostPage> {
                                                                   color: Colors
                                                                       .grey),
                                                             ),
-                                                            Divider(), 
+                                                            Divider(),
                                                           ],
                                                         );
                                                       }).toList() ??
@@ -452,7 +456,7 @@ class _CostPageState extends State<CostPage> {
                                                               fontSize: 14.0,
                                                               color:
                                                                   Colors.red),
-                                                        )
+                                                        ),
                                                       ],
                                                 ],
                                               ),
@@ -461,12 +465,18 @@ class _CostPageState extends State<CostPage> {
                                         },
                                       );
                                     } else {
-                                      return Text("No cost data available.");
+                                      return Center(
+                                          child:
+                                              Text("No services available."));
                                     }
-                                  default:
-                                    return SizedBox.shrink();
+                                  default: // Handle null case or any other unexpected status
+                                    return Center(
+                                        child: Text(
+                                            "Unexpected status or data is null."));
                                 }
-                              }))
+                              },
+                            ),
+                          ),
                         ],
                       ),
                     ),

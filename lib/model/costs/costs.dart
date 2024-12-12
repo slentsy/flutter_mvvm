@@ -1,6 +1,6 @@
-import 'package:equatable/equatable.dart';
+// import 'package:equatable/equatable.dart';
 
-import 'cost.dart';
+part of '../model.dart';
 
 class Costs extends Equatable {
   final String? service;

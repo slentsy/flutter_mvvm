@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mvvm/data/response/api_response.dart';
-import 'package:flutter_mvvm/model/city.dart';
 import 'package:flutter_mvvm/model/model.dart';
-import 'package:flutter_mvvm/model/service.dart';
 import 'package:flutter_mvvm/repository/home_repository.dart';
 
 // untuk get data pasti sama menggunakan seperti ini
 
 class HomeViewmodel with ChangeNotifier {
   final _homeRepo = HomeRepository();
+
+  // getter setter origin province and origin city 
+
   ApiResponse<List<Province>> provinceList = ApiResponse.loading();
-  ApiResponse<List<Province>> destinationProvinceList = ApiResponse.loading();
 
   setProvinceList(ApiResponse<List<Province>> response) {
     provinceList = response;
@@ -27,7 +27,6 @@ class HomeViewmodel with ChangeNotifier {
   }
 
   ApiResponse<List<City>> cityList = ApiResponse.loading();
-  ApiResponse<List<City>> destinationCityList = ApiResponse.loading();
 
   setCityList(ApiResponse<List<City>> response) {
     cityList = response;
@@ -58,44 +57,48 @@ class HomeViewmodel with ChangeNotifier {
     }
   }
 
-  double? weight;
+  // done getter setter origin province and origin city
 
-  void setWeight(double newWeight){
-    weight = newWeight;
+  ApiResponse<List<City>> destinationCityList = ApiResponse.loading();
+
+  setDestinationCityList(ApiResponse<List<City>> response) {
+    destinationCityList = response;
     notifyListeners();
   }
 
-  ApiResponse<List<Service>> serviceList = ApiResponse.loading();
+  Future<void> getDestinationCityList(provId) async {
+    setDestinationCityList(ApiResponse.loading());
+    _homeRepo.fetchCityList(provId).then((value) {
+      setDestinationCityList(ApiResponse.completed(value));
+    }).onError((error, stackTrace) {
+      setDestinationCityList(ApiResponse.error(error.toString()));
+    });
+  }
+  
 
-  setServiceList(ApiResponse<List<Service>> response) {
-    serviceList = response;
+  ApiResponse<List<Costs>> costServiceList = ApiResponse.loading();
+
+  setServiceList(ApiResponse<List<Costs>> response) {
+    costServiceList = response;
     notifyListeners();
   }
-
-  Future<void> getServiceList({
-  required String origin,
-  required String destination,
-  required double weight,
+  
+  Future<void> serviceList({
+  required String originProvince,
+  required String originCity,
+  required String destProvince,
+  required String destCity,
+  required int weight,
   required String courier,
 }) async {
   setServiceList(ApiResponse.loading());
-  
-  // Create the params object
-  final params = {
-    'origin': origin,
-    'destination': destination,
-    'weight': weight,
-    'courier': courier,
-  };
 
   // Pass the params to the repository method
-  _homeRepo.fetchServiceList(params).then((value) {
+  _homeRepo.serviceList(originProvince, originCity, destProvince, destCity, weight, courier).then((value) {
     setServiceList(ApiResponse.completed(value));
   }).onError((error, stackTrace) {
     setServiceList(ApiResponse.error(error.toString()));
   });
 }
-
-  
 
 }

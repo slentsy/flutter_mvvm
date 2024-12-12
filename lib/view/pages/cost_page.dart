@@ -20,49 +20,25 @@ class _CostPageState extends State<CostPage> {
   dynamic selectedCity;
   dynamic selectedDestinationProvince;
   dynamic selectedDestinationCity;
-  dynamic selectedService;
+  dynamic weight = TextEditingController();
+  dynamic selectedCourier = 'jne';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 200,
         backgroundColor: const Color(0xF3DCEC),
-        flexibleSpace: Container(
-          child: Row(
-            children: [
-              SizedBox(
-                  height: 112,
-                  width: 97,
-                  child: Image.asset('assets/images/ojek.png')),
-              Column(
-                children: [
-                  Column(
-                    children: [
-                      Text("Hitung Estimasi Ongkir",
-                          style: TextStyle(
-                              color: const Color(0xAAAC0574),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15))
-                    ],
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
+        title: Text("Cost Page"),
+        centerTitle: true,
       ),
       body: ChangeNotifierProvider<HomeViewmodel>(
-        create: (context) => homeViewModel,
-        child: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: Column(
-            children: [
-              // FLEXIBLE AWAL PEMBUKA PROVINSI AWAL DAN KOTA AWAL
-              Flexible(
-                  flex: 1,
-                  child: Card(
+          create: (context) => homeViewModel,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Card(
                     color: Colors.white,
                     elevation: 2,
                     child: Padding(
@@ -117,21 +93,25 @@ class _CostPageState extends State<CostPage> {
                                       setState(() {
                                         selectedProvince = newValue;
                                         selectedCity = null;
-                                        homeViewModel.getCityList(
-                                            selectedProvince.provinceId,
-                                            isDestination: false);
+                                        if (newValue != null) {
+                                          value.setCityList(
+                                              ApiResponse.loading());
+                                          homeViewModel.getCityList(
+                                              selectedProvince.provinceId,
+                                              isDestination: false);
+                                        }
+                                        print('Provinsi Awal: $selectedCity');
                                         // selectedProvinceId = selectedDataProvince.provinceId;
                                       });
                                     });
                               default:
+                                return Container();
                             }
-                            return Container();
                           }), //dropdown province list
 
                           Divider(
-                            height: 32,
+                            height: 10,
                           ),
-
                           Consumer<HomeViewmodel>(builder: (context, value, _) {
                             switch (value.cityList.status) {
                               case Status.loading:
@@ -166,19 +146,17 @@ class _CostPageState extends State<CostPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedCity = newValue;
-                                        // homeViewModel.getCityList(
-                                        //     selectedCity.provinceId);
-                                        // selectedProvinceId = selectedDataProvince.provinceId;
                                       });
+                                      print('Kota Awal : $selectedCity');
                                     });
                               default:
+                                return Container();
                             }
-                            return Container();
                           }),
-// AKHIR KOTA AWAL
+                          // AKHIR KOTA AWAL
 
                           // DISINI UNTUK DESTINASI NYA
-                          Divider(height: 16),
+                          Divider(height: 10),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
@@ -226,18 +204,20 @@ class _CostPageState extends State<CostPage> {
                                       setState(() {
                                         selectedDestinationProvince = newValue;
                                         selectedDestinationCity = null;
-                                        homeViewModel.getCityList(
-                                            selectedDestinationProvince
-                                                .provinceId,
-                                            isDestination: true);
-                                        // selectedProvinceId = selectedDataProvince.provinceId;
                                       });
+                                      if (newValue != null) {
+                                        value.setDestinationCityList(
+                                            ApiResponse.loading());
+                                        homeViewModel.getDestinationCityList(
+                                            selectedDestinationProvince
+                                                .provinceId);
+                                      }
                                     });
                               default:
                             }
                             return Container();
                           }), //dropdown province list
-                          Divider(height: 16),
+                          Divider(height: 10),
                           Consumer<HomeViewmodel>(builder: (context, value, _) {
                             switch (value.destinationCityList.status) {
                               case Status.loading:
@@ -272,106 +252,190 @@ class _CostPageState extends State<CostPage> {
                                     onChanged: (newValue) {
                                       setState(() {
                                         selectedDestinationCity = newValue;
-                                        // homeViewModel.getCityList(
-                                        //     selectedCity.provinceId);
-                                        // selectedProvinceId = selectedDataProvince.provinceId;
                                       });
+                                      print(
+                                          'Kota tujuan : $selectedDestinationCity');
                                     });
                               default:
                             }
                             return Container();
                           }),
                           // AKHIR DESTINASI
+                          Divider(height: 10),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Pilih Kurir",
+                              style: TextStyle(
+                                color: Color(0xFFAC0574),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          DropdownButton<String>(
+                            value: selectedCourier,
+                            items: ['jne', 'pos', 'tiki'].map((courier) {
+                              return DropdownMenuItem(
+                                value: courier,
+                                child: Text(courier.toUpperCase()),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedCourier = value!;
+                              });
+                            },
+                          ),
 
-// INI UNTUK BERATNYA
-
-                          Divider(height: 32),
+                          // Weight Input Section
+                          Divider(height: 10),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               "Berat (gr)",
                               style: TextStyle(
-                                  color: Color(0xFFAC0574),
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 16),
+                                color: Color(0xFFAC0574),
+                                fontWeight: FontWeight.w900,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
                           TextField(
                             decoration:
                                 InputDecoration(border: OutlineInputBorder()),
+                            controller: weight,
                             keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              final parsedWeight = double.tryParse(value);
-                              if (parsedWeight != null) {
-                                context
-                                    .read<HomeViewmodel>()
-                                    .setWeight(parsedWeight);
-                              }
+                            onChanged: (newValue) {
+                              print('Berat: ${weight.text}');
                             },
                           ),
-                          // AKHIR BERATNYA
 
-                          // MEMILIH JASANYA
-                          Divider(height: 32),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Pilih Jasanya",
-                              style: TextStyle(
-                                  color: Color(0xFFAC0574),
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 16),
-                            ),
-                          ),
-                          Consumer<HomeViewmodel>(
-                            builder: (context, value, _) {
-                              switch (value.serviceList.status) {
-                                case Status.loading:
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                case Status.error:
-                                  return Text(
-                                      value.serviceList.message.toString());
-                                case Status.complited:
-                                  return ListView.builder(
-                                    itemCount:
-                                        value.serviceList.data?.length ?? 0,
-                                    itemBuilder: (context, index) {
-                                      final service =
-                                          value.serviceList.data![index];
-                                      return ExpansionTile(
-                                        title: Text(service.name ?? ''),
-                                        children: service.costs?.map((cost) {
-                                              return ListTile(
-                                                title: Text(cost.service ?? ''),
-                                                subtitle: Text(
-                                                    cost.description ?? ''),
-                                                trailing: Text(
-                                                    '${cost.cost?.first.value ?? 0} IDR'),
-                                              );
-                                            }).toList() ??
-                                            [],
-                                      );
-                                    },
-                                  );
-                                default:
-                                  return Container();
+                          // Service Selection Section
+                          Divider(height: 10),
+                          // Calculate Button
+                          ElevatedButton(
+                            onPressed: () async {
+                              if (selectedProvince == null ||
+                                  selectedCity == null ||
+                                  selectedDestinationProvince == null ||
+                                  selectedDestinationCity == null ||
+                                  weight.text.isEmpty ||
+                                  selectedCourier.isEmpty) {
+                                // Show an error message if inputs are invalid
+                                showDialog(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: Text("Input Error"),
+                                    content: Text(
+                                        "Please fill in all the required fields."),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(ctx).pop();
+                                        },
+                                        child: Text("OK"),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                return;
+                              }
+
+                              if (selectedCity != null &&
+                                  selectedDestinationCity != null) {
+                                print(
+                                    "Selected Origin City: ${selectedCity.cityId}");
+                                print(
+                                    "Selected Destination City: ${selectedDestinationCity.cityId}");
+                                await homeViewModel.serviceList(
+                                  originProvince: selectedProvince.provinceId,
+                                  originCity: selectedCity.cityId,
+                                  destProvince:
+                                      selectedDestinationProvince.provinceId,
+                                  destCity: selectedDestinationCity.cityId,
+                                  weight: int.parse(weight.text),
+                                  courier: selectedCourier,
+                                );
+                              } else {
+                                print(
+                                    "Please select both origin and destination cities.");
                               }
                             },
-                          )
+                            child: Text("Calculate Cost"),
+                          ),
+                          SizedBox(
+                              height: 200,
+                              child: Consumer<HomeViewmodel>(
+                                  builder: (context, value, _) {
+                                switch (value.costServiceList.status) {
+                                  case Status.loading:
+                                    return CircularProgressIndicator();
+                                  case Status.error:
+                                    return Text(
+                                      "Error: ${value.costServiceList.message}",
+                                      style: TextStyle(color: Colors.red),
+                                    );
+                                  case Status.complited:
+                                    // Display the cost list
+                                    if (value
+                                            .costServiceList.data?.isNotEmpty ==
+                                        true) {
+                                      return ListView.builder(
+                                        itemCount:
+                                            value.costServiceList.data!.length,
+                                        itemBuilder: (context, index) {
+                                          final cost = value
+                                              .costServiceList.data![index];
+                                          print(
+                                              "Service: ${cost.service}, Description: ${cost.description}, Cost: ${cost.cost}");
+                                          return ListTile(
+                                            title: Text(cost.service ??
+                                                'Unknown Service'),
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: cost.cost?.map((c) {
+                                                    return Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                            'Description: ${cost.description ?? 'N/A'}'),
+                                                        Text(
+                                                            'Cost: ${c.value?.toString() ?? 'N/A'}'),
+                                                        Text(
+                                                            'ETD: ${c.etd ?? 'N/A'}'),
+                                                        Text(
+                                                            'Note: ${c.note ?? 'N/A'}'),
+                                                      ],
+                                                    );
+                                                  }).toList() ??
+                                                  [
+                                                    Text(
+                                                        'No cost data available.')
+                                                  ],
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    } else {
+                                      return Text("No cost data available.");
+                                    }
+                                  default:
+                                    return Container();
+                                }
+                              }))
+                          // Displaying Results
                         ],
                       ),
                     ),
-                  )),
-              // Flexible(
-              //     flex: 2,
-              //     child: Container(
-              //       color: Colors.brown.shade200,
-              //     ))
-            ],
-          ),
-        ),
-      ),
+                  ),
+                ],
+              ),
+            ),
+          )),
     );
   }
 }

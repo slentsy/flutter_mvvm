@@ -1,4 +1,6 @@
-import 'package:equatable/equatable.dart';
+// import 'package:equatable/equatable.dart';
+
+part of 'model.dart';
 
 class City extends Equatable {
   final String? cityId;

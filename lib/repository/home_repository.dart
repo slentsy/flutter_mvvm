@@ -1,7 +1,6 @@
 import 'package:flutter_mvvm/data/network/network_api_services.dart';
-import 'package:flutter_mvvm/model/city.dart';
 import 'package:flutter_mvvm/model/model.dart';
-import 'package:flutter_mvvm/model/service.dart';
+import 'package:flutter_mvvm/shared/shared.dart';
 
 class HomeRepository {
   final _apiServices = NetworkApiServices();
@@ -49,22 +48,42 @@ class HomeRepository {
     }
   }
 
-  Future<List<Service>> fetchServiceList(dynamic params) async {
-    try {
-      print("Fetching services with params: $params");
-      dynamic response =
-          await _apiServices.postApiResponse('/starter/cost', params);
-      print("API response: $response");
-      List<Service> result = [];
-      if (response['rajaongkir']['status']['code'] == 200) {
-        result = (response['rajaongkir']['results'] as List)
-            .map((e) => Service.fromJson(e))
-            .toList();
+
+Future<List<Costs>> serviceList(
+  String originProvince, 
+  String originCity,
+  String destProvince, 
+  String destCity, 
+  int weight, 
+  String courier) async {
+  try {
+    print("Request Payload: originCity=$originCity, destCity=$destCity, weight=$weight, courier=$courier");
+    final response = await _apiServices.postApiResponse(
+      'https://api.rajaongkir.com/starter/cost', 
+      {
+        "origin": originCity,
+        "destination": destCity,
+        "weight": weight.toString(),
+        "courier": courier,
+      },
+      headers: {
+        "key": Const.apiKey,
+        "Content-Type": "application/x-www-form-urlencoded"
       }
-      return result;
-    } catch (e) {
-      print("Error in fetchServiceList: $e");
-      throw e;
+    );
+    
+    print("Raw API Response: $response");
+
+    if (response['rajaongkir']['status']['code'] == 200) {
+      return (response['rajaongkir']['results'] as List)
+          .map((e) => Costs.fromJson(e))
+          .toList();
+    } else {
+      throw Exception('API returned error: ${response['rajaongkir']['status']}');
     }
+  } catch (e) {
+    print("Error in serviceList: $e");
+    throw Exception('Failed to fetch services: $e');
   }
+}
 }

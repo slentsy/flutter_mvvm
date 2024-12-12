@@ -14,7 +14,7 @@ class NetworkApiServices implements BaseApiServices {
     try {
       final response = await http
           .get(Uri.https(Const.baseUrl, endpoint), headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF=8',
+        'Content-Type': 'application/json; charset=UTF-8',
         'key': Const.apiKey,
       });
       responseJson = returnResponse(response);
@@ -28,9 +28,25 @@ class NetworkApiServices implements BaseApiServices {
   }
 
   @override
-  Future postApiResponse(String url, data) {
-    // TODO: implement getApiResponse
-    throw UnimplementedError();
+  Future postApiResponse(String url, dynamic data, {Map<String, String>? headers}) async {
+    dynamic responseJson;
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: headers ?? {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'key': Const.apiKey,
+        },
+        body: data.entries.map((e) => '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value.toString())}').join('&'),
+      );
+      responseJson = returnResponse(response);
+    } on SocketException {
+      throw NoInternetException('');
+    } on TimeoutException {
+      throw FetchDataException('Network request time out!');
+    }
+
+    return responseJson;
   }
 
   dynamic returnResponse(http.Response response) {
@@ -45,7 +61,7 @@ class NetworkApiServices implements BaseApiServices {
         throw UnauthorisedException(response.body.toString());
       default:
         throw FetchDataException(
-            'Error occured while communicating with server');
+            'Error occurred while communicating with server');
     }
   }
 }

@@ -55,7 +55,8 @@ Future<List<Costs>> serviceList(
   String destProvince, 
   String destCity, 
   int weight, 
-  String courier) async {
+  String courier,
+) async {
   try {
     print("Request Payload: originCity=$originCity, destCity=$destCity, weight=$weight, courier=$courier");
     final response = await _apiServices.postApiResponse(
@@ -69,15 +70,18 @@ Future<List<Costs>> serviceList(
       headers: {
         "key": Const.apiKey,
         "Content-Type": "application/x-www-form-urlencoded"
-      }
+      },
     );
     
     print("Raw API Response: $response");
 
     if (response['rajaongkir']['status']['code'] == 200) {
-      return (response['rajaongkir']['results'] as List)
-          .map((e) => Costs.fromJson(e))
-          .toList();
+      final results = response['rajaongkir']['results'] as List;
+      final List<Costs> costList = results.expand((result) {
+        return (result['costs'] as List)
+            .map((cost) => Costs.fromJson(cost as Map<String, dynamic>));
+      }).toList();
+      return costList;
     } else {
       throw Exception('API returned error: ${response['rajaongkir']['status']}');
     }
@@ -86,4 +90,5 @@ Future<List<Costs>> serviceList(
     throw Exception('Failed to fetch services: $e');
   }
 }
+
 }

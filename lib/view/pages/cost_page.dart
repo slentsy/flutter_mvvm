@@ -101,13 +101,12 @@ class _CostPageState extends State<CostPage> {
                                               isDestination: false);
                                         }
                                         print('Provinsi Awal: $selectedCity');
-                                        // selectedProvinceId = selectedDataProvince.provinceId;
                                       });
                                     });
                               default:
                                 return Container();
                             }
-                          }), //dropdown province list
+                          }), 
 
                           Divider(
                             height: 10,
@@ -288,7 +287,7 @@ class _CostPageState extends State<CostPage> {
                             },
                           ),
 
-                          // Weight Input Section
+                          // beratnya diinput
                           Divider(height: 10),
                           Align(
                             alignment: Alignment.centerLeft,
@@ -310,10 +309,7 @@ class _CostPageState extends State<CostPage> {
                               print('Berat: ${weight.text}');
                             },
                           ),
-
-                          // Service Selection Section
                           Divider(height: 10),
-                          // Calculate Button
                           ElevatedButton(
                             onPressed: () async {
                               if (selectedProvince == null ||
@@ -322,7 +318,7 @@ class _CostPageState extends State<CostPage> {
                                   selectedDestinationCity == null ||
                                   weight.text.isEmpty ||
                                   selectedCourier.isEmpty) {
-                                // Show an error message if inputs are invalid
+                                // salah input
                                 showDialog(
                                   context: context,
                                   builder: (ctx) => AlertDialog(
@@ -377,7 +373,7 @@ class _CostPageState extends State<CostPage> {
                                       style: TextStyle(color: Colors.red),
                                     );
                                   case Status.complited:
-                                    // Display the cost list
+                                    // tampilin cost nya
                                     if (value
                                             .costServiceList.data?.isNotEmpty ==
                                         true) {
@@ -385,37 +381,81 @@ class _CostPageState extends State<CostPage> {
                                         itemCount:
                                             value.costServiceList.data!.length,
                                         itemBuilder: (context, index) {
-                                          final cost = value
+                                          final Costs costItem = value
                                               .costServiceList.data![index];
-                                          print(
-                                              "Service: ${cost.service}, Description: ${cost.description}, Cost: ${cost.cost}");
-                                          return ListTile(
-                                            title: Text(cost.service ??
-                                                'Unknown Service'),
-                                            subtitle: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: cost.cost?.map((c) {
-                                                    return Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
+                                          return Card(
+                                            margin: EdgeInsets.symmetric(
+                                                vertical: 8.0,
+                                                horizontal: 16.0),
+                                            elevation:
+                                                4.0, 
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(
+                                                        12.0)),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(16),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    costItem.service ??
+                                                        'Unknown Service',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 16.0,
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 8.0),
+                                                  Text(
+                                                    'Description: ${costItem.description ?? 'N/A'}',
+                                                    style: TextStyle(
+                                                        fontSize: 14.0),
+                                                  ),
+                                                  SizedBox(height: 8.0),
+                                                  ...costItem.cost?.map((cost) {
+                                                        return Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              'Cost: ${cost.value?.toString() ?? 'N/A'}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14.0),
+                                                            ),
+                                                            Text(
+                                                              'ETD: ${cost.etd ?? 'N/A'}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14.0),
+                                                            ),
+                                                            Text(
+                                                              'Note: ${cost.note ?? 'N/A'}',
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14.0,
+                                                                  color: Colors
+                                                                      .grey),
+                                                            ),
+                                                            Divider(), 
+                                                          ],
+                                                        );
+                                                      }).toList() ??
+                                                      [
                                                         Text(
-                                                            'Description: ${cost.description ?? 'N/A'}'),
-                                                        Text(
-                                                            'Cost: ${c.value?.toString() ?? 'N/A'}'),
-                                                        Text(
-                                                            'ETD: ${c.etd ?? 'N/A'}'),
-                                                        Text(
-                                                            'Note: ${c.note ?? 'N/A'}'),
+                                                          'No cost data available.',
+                                                          style: TextStyle(
+                                                              fontSize: 14.0,
+                                                              color:
+                                                                  Colors.red),
+                                                        )
                                                       ],
-                                                    );
-                                                  }).toList() ??
-                                                  [
-                                                    Text(
-                                                        'No cost data available.')
-                                                  ],
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
@@ -424,10 +464,9 @@ class _CostPageState extends State<CostPage> {
                                       return Text("No cost data available.");
                                     }
                                   default:
-                                    return Container();
+                                    return SizedBox.shrink();
                                 }
                               }))
-                          // Displaying Results
                         ],
                       ),
                     ),

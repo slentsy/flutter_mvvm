@@ -74,9 +74,14 @@ class HomeViewmodel with ChangeNotifier {
       setDestinationCityList(ApiResponse.error(error.toString()));
     });
   }
+
+  
   
 
   ApiResponse<List<Costs>> costServiceList = ApiResponse.loading();
+
+  // ApiResponse<List<Costs>> costServiceList = ApiResponse.initial();
+
 
   setServiceList(ApiResponse<List<Costs>> response) {
     costServiceList = response;
@@ -93,12 +98,14 @@ class HomeViewmodel with ChangeNotifier {
 }) async {
   setServiceList(ApiResponse.loading());
 
-  // Pass the params to the repository method
-  _homeRepo.serviceList(originProvince, originCity, destProvince, destCity, weight, courier).then((value) {
-    setServiceList(ApiResponse.completed(value));
-  }).onError((error, stackTrace) {
+  try {
+    final costList = await _homeRepo.serviceList(
+      originProvince, originCity, destProvince, destCity, weight, courier,
+    );
+    setServiceList(ApiResponse.completed(costList));
+  } catch (error) {
     setServiceList(ApiResponse.error(error.toString()));
-  });
+  }
 }
 
 }

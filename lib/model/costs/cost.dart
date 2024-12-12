@@ -9,11 +9,13 @@ class Cost extends Equatable {
 
   const Cost({this.value, this.etd, this.note});
 
-  factory Cost.fromJson(Map<String, dynamic> json) => Cost(
-        value: json['value'] as int?,
-        etd: json['etd'] as String?,
-        note: json['note'] as String?,
-      );
+  factory Cost.fromJson(Map<String, dynamic> json) {
+    return Cost(
+      value: json['value'] as int?,
+      etd: json['etd'] as String?,
+      note: json['note'] as String?,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'value': value,
